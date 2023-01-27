@@ -27,6 +27,7 @@ jobs:
         tox -e testenv
         tox -e black
         tox -e mypy
+        tox -e build-check
     - name: Set up Python 3.9
       uses: actions/setup-python@v2
       with:
@@ -38,6 +39,7 @@ jobs:
         tox -e testenv
         tox -e black
         tox -e mypy
+        tox -e build-check
     - name: Set up Python 3.10
       uses: actions/setup-python@v2
       with:
@@ -49,6 +51,7 @@ jobs:
         tox -e testenv
         tox -e black
         tox -e mypy
+        tox -e build-check
 
   deploy:
     runs-on: ubuntu-latest
@@ -70,8 +73,7 @@ jobs:
         run: |
         pip install --upgrade pip
         pip install --upgrade build twine
-        python build
-        ls -l dist
+        python -m build
         twine upload --username $TEST_TWINE_USERNAME --password $TEST_TWINE_PASSWORD --skip-existing --repository-url https://test.pypi.org/legacy/  dist/*
         echo "Package deployed to Test PyPI"
     - name: Build and upload to PyPI
@@ -83,6 +85,6 @@ jobs:
         run: |
         pip install --upgrade pip
         pip install --upgrade build twine
-        python build
+        python -m build
         ls -l dist
         twine upload --username $TWINE_USERNAME --password $TWINE_PASSWORD --skip-existing --repository-url https://upload.pypi.org/legacy/ dist/*

@@ -206,8 +206,6 @@ class ExcelArchive:
         f = self.__worksheetpath(worksheet)
         tree = ET.parse(self.archive.open(f))
         root_elem = tree.getroot()
-        for i in root_elem:
-            print(i)
         try:
             __eidx = self.__get_elem_index(root_elem, XmlTag.HEADERFOOTER.value)
             base = root_elem[__eidx][0].text
