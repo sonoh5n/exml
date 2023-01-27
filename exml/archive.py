@@ -2,7 +2,7 @@ import os
 import re
 import xml.etree.ElementTree as ET
 from enum import Enum
-from typing import Any, Generator, Union
+from typing import Any, Generator, List, Tuple, Union
 from xml.etree.ElementTree import Element
 from zipfile import ZipFile
 
@@ -88,7 +88,7 @@ class ExcelArchive:
                     return index
         return 0
 
-    def __get_worksheet(self) -> list[Union[str, Any]]:
+    def __get_worksheet(self) -> List[Union[str, Any]]:
         f = self.workbook
         tree = ET.parse(self.archive.open(f))
         root_elem = tree.getroot()
@@ -100,12 +100,12 @@ class ExcelArchive:
                 sheet_names.append(elem.attrib["name"])
         return sheet_names
 
-    def __worksheetpath(self, index: int) -> Union[str, list]:
+    def __worksheetpath(self, index: int) -> Union[str, List]:
         return self.worksheets + str(index) + ".xml"
 
     def get_cell(
         self, row: int, col: int, *, worksheet: int = 1
-    ) -> tuple[Coordinate, Cell, CellAttribute]:
+    ) -> Tuple[Coordinate, Cell, CellAttribute]:
 
         _coordinate = Coordinate(row=row, col=col)
         _prop = CellAttribute()
