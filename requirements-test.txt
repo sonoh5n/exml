@@ -1,0 +1,11 @@
+-r requirements.txt
+coverage
+flake8
+mypy
+pytest
+pytest-cov
+black
+tox
+
+
+openpyxl
