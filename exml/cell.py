@@ -1,3 +1,5 @@
+from typing import List
+
 from pydantic import Field, dataclasses, validator
 
 from exml.exceptions import CellOutsideRange
@@ -54,4 +56,4 @@ class Deco:
 @dataclasses.dataclass
 class CellAttribute:
     id: int = 0
-    decorator: list = Field(default_factory=list)
+    decorator: List = Field(default_factory=list)
