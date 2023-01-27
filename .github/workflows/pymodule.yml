@@ -5,7 +5,7 @@ on:
     branches:
       - test
   pull_request:
-    types: [closed]
+    # types: [closed]
     branches:
       - master
       - main
@@ -74,7 +74,7 @@ jobs:
         pip install --upgrade pip
         pip install --upgrade build twine
         python -m build
-        twine upload --u $TEST_TWINE_USERNAME --p $TEST_TWINE_PASSWORD --skip-existing --repository-url https://test.pypi.org/legacy/  dist/*
+        twine upload -u $TEST_TWINE_USERNAME -p $TEST_TWINE_PASSWORD --skip-existing --repository-url https://test.pypi.org/legacy/  dist/*
         echo "Package deployed to Test PyPI"
     - name: Build and upload to PyPI
       if: startsWith(github.ref, 'refs/tags/release-')
