@@ -2,7 +2,7 @@ from typing import List
 
 from pydantic import Field, dataclasses, validator
 
-from exml.exceptions import CellOutsideRange
+from exmlrd.exceptions import CellOutsideRange
 
 
 @dataclasses.dataclass

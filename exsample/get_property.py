@@ -11,11 +11,11 @@ the following message will be displayed
 >> [cell(x,y)] Warning: child index out of range
 """
 
-import exml
+import exmlrd
 
 if __name__ == "__main__":
 
-    excel_arch = exml.excel_archiver("myInputExcelFile.xlsx")
+    excel_arch = exmlrd.excel_archiver("myInputExcelFile.xlsx")
 
     # Get a Cell
     cell, attr, prop = excel_arch.get_cell(2, 3)

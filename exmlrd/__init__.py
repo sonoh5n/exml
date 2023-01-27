@@ -1,4 +1,4 @@
-from exml.archive import ExcelArchive
+from exmlrd.archive import ExcelArchive
 
 
 def excel_archiver(filepath: str) -> ExcelArchive:

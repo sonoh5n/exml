@@ -1,6 +1,6 @@
 import pytest
 
-from exml.archive import ExcelArchive, XmlTag
+from exmlrd.archive import ExcelArchive, XmlTag
 
 
 def test_xmltag():

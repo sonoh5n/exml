@@ -1,7 +1,7 @@
 import pytest
 
-from exml.cell import Coordinate
-from exml.exceptions import CellOutsideRange
+from exmlrd.cell import Coordinate
+from exmlrd.exceptions import CellOutsideRange
 
 
 @pytest.fixture

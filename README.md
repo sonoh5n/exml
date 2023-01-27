@@ -1,29 +1,29 @@
 # A Python library for easy handling of XML files
 
-The exml package is a simple package for reading and extracting data from Excel files. It is ideal for projects that need to extract data from Excel files without the need for a full-featured library.
+The exmlrdrd package is a simple package for reading and extracting data from Excel files. It is ideal for projects that need to extract data from Excel files without the need for a full-featured library.
 
 This package provides a simple interface for reading and extracting data from Excel files. It supports the xlsx format and can be easily integrated into any Python project.
 
-With exml, you can easily read and extract data from Excel files without writing complicated code. Simply import the package, open the Excel file, and extract the data you need. The package also includes options to specify the sheet or range of sheets to be extracted and the ability to extract all the data in the file.
+With exmlrd, you can easily read and extract data from Excel files without writing complicated code. Simply import the package, open the Excel file, and extract the data you need. The package also includes options to specify the sheet or range of sheets to be extracted and the ability to extract all the data in the file.
 
 ## Installation
 
-Use pip to install exml:
+Use pip to install exmlrd:
 
 ```bash
-pip install exml
+pip install exmlrd
 ```
 
 ## Usage
 
 ### Extract the Cell
 
-With the exml package, you can easily specify the row and column numbers of a cell and extract the corresponding data. This allows you to easily access specific cell information within an Excel file.
+With the exmlrd package, you can easily specify the row and column numbers of a cell and extract the corresponding data. This allows you to easily access specific cell information within an Excel file.
 
 ```python
-import exml
+import exmlrd
 
-excel_arch = exml.excel_archiver("myInputExcelFile.xlsx")
+excel_arch = exmlrd.excel_archiver("myInputExcelFile.xlsx")
 cell, attr, prop = excel_arch.get_cell(2, 3)
 
 # Get a Cell
@@ -38,12 +38,12 @@ print(f"Value: {attr.v}")
 
 ### Bulk extraction of cells from Excel
 
-The exml package also allows you to extract data from multiple cells at once, making it easy to retrieve large amounts of information from an Excel file in one go.
+The exmlrd package also allows you to extract data from multiple cells at once, making it easy to retrieve large amounts of information from an Excel file in one go.
 
 ```python
-import exml
+import exmlrd
 
-excel_arch = exml.excel_archiver("myInputExcelFile.xlsx")
+excel_arch = exmlrd.excel_archiver("myInputExcelFile.xlsx")
 cell, attr, prop = excel_arch.get_cell(2, 3)
 
 # Get the name of sheet number "2"
@@ -62,9 +62,9 @@ for i in range(0, 5):
 The package's prop.decorator contains properties of the cells.
 
 ```python
-import exml
+import exmlrd
 
-excel_arch = exml.excel_archiver("myInputExcelFile.xlsx")
+excel_arch = exmlrd.excel_archiver("myInputExcelFile.xlsx")
 cell, attr, prop = excel_arch.get_cell(2, 3)
 
 # Get decorator

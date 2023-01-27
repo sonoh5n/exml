@@ -2,11 +2,11 @@
 Sample code to check if the cells specified as arguments are merged in the target Excel sheet
 """
 
-import exml
+import exmlrd
 
 if __name__ == "__main__":
 
-    excel_arch = exml.excel_archiver("myInputExcelFile.xlsx")
+    excel_arch = exmlrd.excel_archiver("myInputExcelFile.xlsx")
 
     # If merged, the range of cells is returned as a string.
     # If not merged, an empty string is returned.

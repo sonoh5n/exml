@@ -2,7 +2,7 @@ import os
 
 from pydantic import BaseModel, validator
 
-from exml.exceptions import NotSupportFmt
+from exmlrd.exceptions import NotSupportFmt
 
 
 class ExcelObj(BaseModel):

@@ -8,8 +8,8 @@ from zipfile import ZipFile
 
 from pydantic import validate_arguments
 
-from exml.cell import Cell, CellAttribute, Coordinate, Deco
-from exml.excel import ExcelObj
+from exmlrd.cell import Cell, CellAttribute, Coordinate, Deco
+from exmlrd.excel import ExcelObj
 
 
 class XmlTag(Enum):

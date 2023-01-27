@@ -1,7 +1,7 @@
 import pytest
 
-from exml.excel import ExcelObj
-from exml.exceptions import NotSupportFmt
+from exmlrd.excel import ExcelObj
+from exmlrd.exceptions import NotSupportFmt
 
 
 @pytest.fixture
