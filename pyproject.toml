@@ -18,8 +18,8 @@ classifiers = [
 ]
 
 [project.urls]
-"Homepage" = "https://gitlab.com/hsono57/convoc"
-"Bug Tracker" = "https://gitlab.com/hsono57/convocissues"
+"Homepage" = "https://github.com/sonoh5n/exml"
+"Bug Tracker" = "https://github.com/sonoh5n/exml/issues"
 
 [tool.setuptools.packages.find]
 exclude = ["tests", "data"]
