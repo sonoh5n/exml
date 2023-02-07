@@ -4,9 +4,12 @@ on:
   push:
     branches:
       - main
+  pull_request:
+    branches:
+      - main
   create:
     tag:
-      - "v*"
+      - '*'
 
 env:
   TEST_TWINE_USERNAME: ${{ secrets.TEST_PYPI_USERNAME }}
