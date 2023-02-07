@@ -2,6 +2,8 @@ import pytest
 
 from exmlrd import log
 from exmlrd.archive import ExcelArchive
+from exmlrd.cell import Format
+from exmlrd.sharedstyle import SiTag
 
 logger = log.get_logger(__name__)
 
@@ -51,8 +53,8 @@ def test_get_celladdress(setup_excel, arg1, arg2, arg3):
 
 
 @pytest.mark.parametrize('row, col, arg1, arg2, arg3, arg4, arg5, arg6, arg7', 
-    [(1, 1, 1, 1, "B2", "57","",None, None),
-    (2, 1, 2, 1, "B3", "19", "", None, None)])
+    [(1, 1, 1, 1, "B2", "57","", SiTag(), Format()),
+    (2, 1, 2, 1, "B3", "19", "", SiTag(), Format())])
 def test_get_cells(setup_excel, row, col, arg1, arg2, arg3, arg4, arg5, arg6, arg7):
     archive = ExcelArchive("tests/sample.xlsx")
     cell = archive.get_cell(row,col)

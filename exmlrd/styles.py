@@ -4,7 +4,7 @@ from typing import Dict, List, Optional, Tuple
 from xml.etree.ElementTree import Element
 from zipfile import ZipFile
 
-from pydantic import dataclasses
+from pydantic import Field, dataclasses
 
 from exmlrd import log
 from exmlrd.tags import StylesTag
@@ -114,8 +114,8 @@ class NumFmt:
             num = match.group(1)[::-1]
             unit = match.group(2)[::-1] if match.group(2) else None
             remaining = match.group(3)[::-1]
-            return [num, unit, remaining]
-        return [None, None, input_text[::-1]]
+            return num, unit, remaining
+        return None, None, input_text[::-1]
 
 
 @dataclasses.dataclass
@@ -135,10 +135,10 @@ class XFS:
 
 @dataclasses.dataclass
 class Format:
-    numFmt: NumFmt
-    font: Font
-    fill: Fills
-    border: Border
+    numFmt: NumFmt = Field(default_factory=NumFmt)
+    font: Font = Field(default_factory=Font)
+    fill: Fills = Field(default_factory=Fills)
+    border: Border= Field(default_factory=Border)
 
 
 class Styels:

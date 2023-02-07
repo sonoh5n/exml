@@ -31,8 +31,8 @@ class Cell:
     address: str = ""
     value: str = ""
     formula: str = ""
-    shared: Optional[SiTag] = None
-    style: Optional[Format] = None
+    shared: SiTag = SiTag()
+    style: Format = Format()
 
     @validator("row", always=True)
     def check_row_range(cls, v):
@@ -148,19 +148,28 @@ class SheetXml:
         root_elem = tree.getroot()
         __eidx = self.__get_elem_index(root_elem, SheetXmlTag.SHEETDATA.value)
         if not isinstance(__eidx, int):
-            return None
+            return Cell(
+                row=row,
+                col=col,
+                shared=SiTag(),
+            )
         try:
             _ex_row = root_elem[__eidx][row][col]
         except IndexError as e:
-            meg = f"[cell({row},{col})] Warning: {e}"
-            logger.debug(meg)
-            return None
+            # meg = f"[cell({row},{col})] Warning: {e}"
+            # logger.debug(meg)
+            return Cell(
+                row=row,
+                col=col,
+                shared=SiTag(),
+            )
 
         sidx = _ex_row.attrib.get("s")
         _cell = Cell(
             row=row,
             col=col,
             address=_ex_row.attrib["r"],
+            shared=SiTag(),
             style=self.style.get_format(int(str(sidx))),
         )
         if _ex_row.attrib.get("t"):
