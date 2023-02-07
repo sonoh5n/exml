@@ -56,10 +56,18 @@ jobs:
         tox -e black
         tox -e mypy
         tox -e build-check
+    if: |
+      github.event_name == 'push' && (
+        (github.ref == 'refs/heads/develop') ||
+        (github.ref == 'refs/heads/feature') ||
+        (github.ref == 'refs/heads/test')
+      )
 
   deploy:
     runs-on: ubuntu-latest
-    if: '${{ github.ref }} == "refs/heads/main"'
+    if: |
+      (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
+      (github.event_name == 'create' && startsWith(github.ref, 'refs/tags/'))
 
     steps:
     - name: Checkout code
