@@ -20,9 +20,9 @@ def test_excelobj_failed(setup_excel, excel):
     assert pred == str(ex.value)
 
 def test_filenotfound_failed(setup_excel, excel):
-    pred = "File not exist: data/sample.xlsx"
+    pred = "File not exist: data/sample-test.xlsx"
     with pytest.raises(FileNotFoundError) as ex:
-        excel(path="data/sample.xlsx")
+        excel(path="data/sample-test.xlsx")
     assert pred == str(ex.value)
     
 
