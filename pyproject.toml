@@ -4,11 +4,11 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "exmlrd"
-version = "0.0.1"
+version = "1.0.2"
 authors = [
-  { name="Hayato Sonokawa", email="hsono10n1@gmail.com" },
+  { name="Hayato Sonokawa", email="hsono10n1@gmail.com"},
 ]
-description = "Package to convert csv and directories to each other."
+description = "Python module for simple reading of Excel(.xlsx)"
 readme = "README.md"
 requires-python = ">=3.8"
 classifiers = [
@@ -18,8 +18,8 @@ classifiers = [
 ]
 
 [project.urls]
-"Homepage" = "https://github.com/sonoh5n/exmlrd"
-"Bug Tracker" = "https://github.com/sonoh5n/exml/issues"
+"Homepage" = "https://github.com/sonoh5n/exml-reader"
+"Bug Tracker" = "https://github.com/sonoh5n/exml-reader/issues"
 
 [tool.setuptools.packages.find]
 exclude = ["tests", "data"]
