@@ -4,7 +4,7 @@ from typing import Dict, List, Optional, Tuple
 from xml.etree.ElementTree import Element
 from zipfile import ZipFile
 
-from pydantic import dataclasses
+from pydantic import Field, dataclasses
 
 from exmlrd import log
 from exmlrd.tags import StylesTag
@@ -135,10 +135,10 @@ class XFS:
 
 @dataclasses.dataclass
 class Format:
-    numFmt: NumFmt
-    font: Font
-    fill: Fills
-    border: Border
+    numFmt: NumFmt = Field(default_factory=NumFmt)
+    font: Font = Field(default_factory=Font)
+    fill: Fills = Field(default_factory=Fills)
+    border: Border= Field(default_factory=Border)
 
 
 class Styels:

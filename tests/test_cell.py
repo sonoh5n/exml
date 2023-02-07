@@ -3,8 +3,9 @@ from zipfile import ZipFile
 import pytest
 from pydantic import ValidationError
 
-from exmlrd.cell import Cell, SheetXml, Worksheet
+from exmlrd.cell import Cell, Format, SheetXml, Worksheet
 from exmlrd.exceptions import CellOutsideRange, NotFoundSheet
+from exmlrd.sharedstyle import SiTag
 
 
 @pytest.fixture
@@ -24,6 +25,8 @@ def arch():
 class TestCell:
 
     def test_init_cell(slef, setup_excel, cell):
+        pred_si = SiTag()
+        pred_format = Format()
         pred_c = 0
         pred_a = ""
         assert cell.row == pred_c
@@ -31,8 +34,8 @@ class TestCell:
         assert cell.address == pred_a
         assert cell.value == ""
         assert cell.formula == ""
-        assert cell.shared == None
-        assert cell.style == None
+        assert cell.shared == pred_si
+        assert cell.style == pred_format
 
     def test_success_cell(self, setup_excel, cell):
         pred_row = 1
@@ -40,8 +43,8 @@ class TestCell:
         pred_address = "A2"
         pred_value = "sample"
         pred_formula = "A1+A2+AA3/VV2"
-        pred_shared = None
-        pred_styles = None
+        pred_shared = SiTag()
+        pred_styles = Format()
         result = cell(
             row=1,
             col=2,

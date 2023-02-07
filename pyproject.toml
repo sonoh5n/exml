@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "exmlrd"
-version = "1.0.2"
+version = "1.0.3"
 authors = [
   { name="Hayato Sonokawa", email="hsono10n1@gmail.com"},
 ]
