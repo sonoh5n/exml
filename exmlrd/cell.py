@@ -2,7 +2,12 @@
 Copyright (c) 2023 HAYATO SONOKAWA
 """
 import xml.etree.ElementTree as ET
-from functools import cache
+
+try:
+    from functools import cache
+except ImportError:
+    from functools import lru_cache as cache
+
 from typing import Dict, List, Optional
 from xml.etree.ElementTree import Element
 from zipfile import ZipFile
