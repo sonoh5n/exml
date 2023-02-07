@@ -24,16 +24,21 @@ With the exmlrd package, you can easily specify the row and column numbers of a 
 import exmlrd
 
 excel_arch = exmlrd.excel_archiver("myInputExcelFile.xlsx")
-cell, attr, prop = excel_arch.get_cell(2, 3)
+cell = excel_arch.get_cell(2, 3)
+if cell is None:
+    # Describe the processing when the type of a cell is None:
+    ...
 
-# Get a Cell
-cell, attr, prop = excel_arch.get_cell(2, 3)
 # Get Cell Address
 print(f"address: {cell.address}")
-# Get Base font
-print(f"Base Font: {attr.bf}")
-# Get value of a cell (value of a cell != text of a cell)
-print(f"Value: {attr.v}")
+# Get Cell Text
+print(f"Cell Text: {cell.value}")
+# Get a Cell Font
+print(f"Value: {cell.style.font}")
+# Get a Cell Fill
+print(f"Value: {cell.style.fill}")
+# Get a Cell 
+print(f"Value: {cell.style.border}")
 ```
 
 ### Bulk extraction of cells from Excel
@@ -44,17 +49,20 @@ The exmlrd package also allows you to extract data from multiple cells at once, 
 import exmlrd
 
 excel_arch = exmlrd.excel_archiver("myInputExcelFile.xlsx")
-cell, attr, prop = excel_arch.get_cell(2, 3)
+cell = excel_arch.get_cell(2, 3)
+if cell is None:
+    # Describe the processing when the type of a cell is None:
+    ...
 
+# Retrieve values from multiple cells.
 # Get the name of sheet number "2"
-for i in range(0, 5):
-    for j in range(5):
-        cell, attr, prop = excel_arch.get_cell(i, j, worksheet=2)
-        print(cell)
-        print(attr)
-        for d in prop.decorator:
-            print(d)
-        print("-" * 50)
+for i in range(0, 1):
+    for j in range(0, 3):
+        cell = excel_arch.get_cell(i, j, worksheet=2)
+        if cell is None:
+            continue
+        print(f"Address: {cell.address}")
+        print(f"Value: {cell.value}")
 ```
 
 ### Retrieve properties of cells from Excel
@@ -65,11 +73,66 @@ The package's prop.decorator contains properties of the cells.
 import exmlrd
 
 excel_arch = exmlrd.excel_archiver("myInputExcelFile.xlsx")
-cell, attr, prop = excel_arch.get_cell(2, 3)
+cell = excel_arch.get_cell(2, 3)
+if cell is None:
+    # Describe the processing when the type of a cell is None:
+    ...
 
-# Get decorator
-for deco in prop.decorator:
-    print(f"All: {deco}")
-    print(f"Text: {deco.text}")
-    print(f"Font: {deco.rFont}")
+# Retrieve values from multiple cells.
+# Get the name of sheet number "2"
+for i in range(0, 1):
+    for j in range(0, 3):
+        cell = excel_arch.get_cell(i, j, worksheet=2)
+        if cell is None:
+            continue
+        print(f"Address: {cell.address}")
+        print(f"Value: {cell.value}")
+        print(f"Font: {cell.style.font}")
+        print(f"Border: {cell.style.border}")
+        print(f"Fill: {cell.style.fill}")
+        for rich in cell.shared.rpr:
+            print(f"  RichText: {rich}")
+        print("-" * 50)
 ```
+
+### Getting the Sheet Name
+
+To get the name of a sheet in a spreadsheet, you can use the title attribute of the sheet object in the library you are using.
+
+```python
+import exmlrd
+
+excel_arch = exmlrd.excel_archiver("myInputExcelFile.xlsx")
+
+# Get the name of sheet number "1"
+# The sheet number must start with 1. index=0 is an error.
+sheet_name = excel_arch.worksheet(index=1)
+print(sheet_name)
+```
+
+### Retrieve addresses of all merged cells
+
+This is how you can retrieve addresses of all merged cells in a worksheet using `exmlrd`
+
+```python
+import exmlrd
+
+excel_arch = exmlrd.excel_archiver("myInputExcelFile.xlsx")
+
+# If merged, the range of cells is returned as a string.
+# If not merged, an empty string is returned.
+merge_cell = excel_arch.get_mergecell(start_cell="A1", worksheet=1)
+print(merge_cell)
+
+# Obtain all merged cell locations.
+merge_cells = excel_arch.get_all_mergecell(1)
+print(merge_cells)
+```
+
+## In Conclusion and Looking Forward
+
+Thank you for using this project. If you have any suggestions or questions, please feel free to reach out. We hope this project has been helpful for you.
+
+If you find this project useful, please consider sharing it with others and contributing to its development. Your support helps us continue to improve and maintain the project.
+
+We look forward to your continued involvement and feedback. Thank you for your time and consideration.

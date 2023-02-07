@@ -11,5 +11,8 @@ if __name__ == "__main__":
     # If merged, the range of cells is returned as a string.
     # If not merged, an empty string is returned.
     merge_cell = excel_arch.get_mergecell(start_cell="A1", worksheet=1)
-
     print(merge_cell)
+    
+    # Obtain all merged cell locations.
+    merge_cells = excel_arch.get_all_mergecell(1)
+    print(merge_cells)

@@ -1,20 +1,9 @@
 import pytest
 
-from exmlrd.archive import ExcelArchive, XmlTag
+from exmlrd import log
+from exmlrd.archive import ExcelArchive
 
-
-def test_xmltag():
-    assert XmlTag.DIMENSION.value == "dimension"
-    assert XmlTag.SHEETVIEWS.value == "sheetViews"
-    assert XmlTag.COLS.value == "cols"
-    assert XmlTag.SHEETDATA.value == "sheetData"
-    assert XmlTag.MERGECELLS.value == "mergeCells"
-    assert XmlTag.PHONEITCPR.value == "phoneticPr"
-    assert XmlTag.PAGEMARGINS.value == "pageMargins"
-    assert XmlTag.PAGESETUP.value == "pageSetup"
-    assert XmlTag.HEADERFOOTER.value == "headerFooter"
-    assert XmlTag.DRAWING.value == "drawing"
-    assert XmlTag.SHEETPR.value == "sheetPr"
+logger = log.get_logger(__name__)
 
 
 def test_get_archive_filename_all(setup_excel):
@@ -53,43 +42,39 @@ def test_worksheet(setup_excel):
     (0, 0, 'A1'),
     (2, 3, 'D3'),
     (3, 1, 'B4')])
-def test_get_cell(setup_excel, arg1, arg2, arg3):
+def test_get_celladdress(setup_excel, arg1, arg2, arg3):
     archive = ExcelArchive("tests/sample.xlsx")
-    cell, _, _ = archive.get_cell(arg1,arg2)
+    cell = archive.get_cell(arg1,arg2)
     assert cell.row == arg1
     assert cell.col == arg2
     assert cell.address == arg3
 
 
 @pytest.mark.parametrize('row, col, arg1, arg2, arg3, arg4, arg5, arg6, arg7', 
-    [(1, 1, "B2", "1", "n", "","","",""),
-    (2, 1, "B3", "1", "n", "","","","")])
-def test_get_attr(setup_excel, row, col, arg1, arg2, arg3, arg4, arg5, arg6, arg7):
+    [(1, 1, 1, 1, "B2", "57","",None, None),
+    (2, 1, 2, 1, "B3", "19", "", None, None)])
+def test_get_cells(setup_excel, row, col, arg1, arg2, arg3, arg4, arg5, arg6, arg7):
     archive = ExcelArchive("tests/sample.xlsx")
-    _, attr, _ = archive.get_cell(row,col)
-    assert attr.r == arg1
-    assert attr.s == arg2
-    assert attr.t == arg3
-    assert attr.v == arg4
-    assert attr.f == arg5
-    assert attr.m == arg6
-    assert attr.bf == arg7
+    cell = archive.get_cell(row,col)
+    logger.debug(cell)
+    assert cell.row == arg1
+    assert cell.col == arg2
+    assert cell.address == arg3
+    assert cell.value == arg4
+    assert cell.formula == arg5
+    assert cell.shared == arg6
+    assert cell.style != arg7
 
-@pytest.mark.parametrize('row, col, arg1', [("A1", 1, ""),("H1", 1, "H1:I1")])
-def test_get_mergecell(setup_excel, row, col, arg1):
+@pytest.mark.parametrize('start_cell, sheet, pred', [
+    ("A1", 1, ""),("H1", 1, "H1:I1")])
+def test_get_mergecell(setup_excel, start_cell, sheet, pred):
     archive = ExcelArchive("tests/sample.xlsx")
-    result = archive.get_mergecell(row, col)
-    assert result == arg1
+    result = archive.get_mergecell(start_cell, sheet)
+    assert result == pred
 
-def test_get_basefont(setup_excel):
+def test_get_all_mergecell(setup_excel):
+    pred = {"1": ["H1:I1", 'A7:G9']}
     archive = ExcelArchive("tests/sample.xlsx")
-    result = archive.get_basefont(1)
-    assert result == ""
-
-def test_del_namespace(setup_excel):
-    archive = ExcelArchive("tests/sample.xlsx")
-    n = "{http://schemas.openxmlformats.org/spreadsheetml/2006/main}scheme"
-    result = archive.del_namespace("scheme", namespace=n)
-    assert result == "scheme"
-    n = "{http://schemas.openxmlformats.org/spreadsheetml/2006/main}/test/scheme"
-    result = archive.del_namespace("/test/scheme", namespace=n)
+    result = archive.get_all_mergecell(1)
+    assert list(result.keys()) == ["1"]
+    assert set(result.get("1")) == set(pred.get("1"))

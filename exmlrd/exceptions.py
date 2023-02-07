@@ -1,6 +1,14 @@
 class CellOutsideRange(Exception):
-    pass
+    ...
 
 
 class NotSupportFmt(Exception):
-    pass
+    ...
+
+
+class NotFoundSheet(Exception):
+    ...
+
+
+class NotFoundElemnt(Exception):
+    ...
