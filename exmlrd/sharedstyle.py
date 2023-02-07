@@ -24,7 +24,7 @@ class RichText:
 
 @dataclasses.dataclass
 class SiTag:
-    rpr: list[RichText] = Field(default_factory=list)
+    rpr: List[RichText] = Field(default_factory=List)
 
     @property
     def text(self) -> str:
