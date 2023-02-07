@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - test
+      - develop
       - main
   pull_request:
     types: [closed]
