@@ -1,6 +1,7 @@
 """
 Copyright (c) 2023 HAYATO SONOKAWA
 """
+import re
 import xml.etree.ElementTree as ET
 
 try:
@@ -64,7 +65,7 @@ class Worksheet:
 
     Attributes:
         archive (ZipFile): Excel archive information
-        worksheets (List[str]): Stores all worksheet names.
+        worksheets (list[str]): Stores all worksheet names.
     """
 
     workbook_path = "xl/workbook.xml"
@@ -91,7 +92,7 @@ class Worksheet:
             )
         return self.worksheets[index - 1]
 
-    def __get_worksheet_name(self) -> List[str]:
+    def __get_worksheet_name(self) -> list[str]:
         f = self.workbook_path
         tree = ET.parse(self.archive.open(f))
         root_elem = tree.getroot()
@@ -148,13 +149,19 @@ class SheetXml:
         root_elem = tree.getroot()
         __eidx = self.__get_elem_index(root_elem, SheetXmlTag.SHEETDATA.value)
         if not isinstance(__eidx, int):
-            return None
+            return Cell(
+                row=row,
+                col=col,
+                address=self.convert_to_cell_address(row, col))
         try:
             _ex_row = root_elem[__eidx][row][col]
         except IndexError as e:
             meg = f"[cell({row},{col})] Warning: {e}"
             logger.debug(meg)
-            return None
+            return Cell(
+                row=row,
+                col=col,
+                address=self.convert_to_cell_address(row, col))
 
         sidx = _ex_row.attrib.get("s")
         _cell = Cell(
@@ -192,6 +199,24 @@ class SheetXml:
 
         return _cell
 
+    def get_dimension_address(self, *, worksheet: int = 1) -> Optional[str]:
+        f = self.ws.get_worksheetpath(worksheet)
+        tree = ET.parse(self.archive.open(f))
+        root_elem = tree.getroot()
+        __eidx = self.__get_elem_index(root_elem, SheetXmlTag.DIMENSION.value)
+        if not isinstance(__eidx, int):
+            return None
+        _ex_row = root_elem[__eidx]
+        return _ex_row.attrib.get("ref")
+
+    def get_dimension_coordinate(self, *, worksheet: int = 1):
+        address = self.get_dimension_address(worksheet = worksheet)
+        if not isinstance(address, str):
+            return None
+        start_address = self.convert_to_row_col_index(address.split(":")[0])
+        end_address = self.convert_to_row_col_index(address.split(":")[1])
+        return start_address, end_address
+
     @cache
     def get_mergecell(self, start_cell: str, worksheet: int) -> str:
         f = self.ws.get_worksheetpath(worksheet)
@@ -220,3 +245,20 @@ class SheetXml:
                 mgcell.ref.setdefault(str(worksheet), [])
                 mgcell.ref[str(worksheet)].append((elem.attrib["ref"]))
         return mgcell
+
+    def convert_to_row_col_index(self, cell_address: str):
+        column = cell_address.upper()
+        column_num = 0
+        for c in column:
+            if c in "ABCDEFGHIJKLMNOPQRSTUVWXYZ":
+                column_num = column_num * 26 + (ord(c) - ord("A"))
+        row_num = int(re.search("\d+", cell_address).group())-1
+        return row_num, column_num
+
+    def convert_to_cell_address(self, row: int, col: int):
+        col_str = ""
+        while col > 0:
+            col = col - 1
+            col_str = chr(col % 26 + ord('A')) + col_str
+            col = col // 26
+        return f"{col_str}{row}"

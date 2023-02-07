@@ -24,7 +24,7 @@ class RichText:
 
 @dataclasses.dataclass
 class SiTag:
-    rpr: List[RichText] = Field(default_factory=List)
+    rpr: list[RichText] = Field(default_factory=list)
 
     @property
     def text(self) -> str:
@@ -47,11 +47,11 @@ class SharedStyle:
             self.root_tree = None
         self.si = self.__get_shareitem()
 
-    def __get_shareitem(self) -> List[Optional[SiTag]]:
+    def __get_shareitem(self) -> list[Optional[SiTag]]:
         if self.root_tree is None:
             si = SiTag()
             return []
-        shareditems: List[Any] = []
+        shareditems: list[Any] = []
         shared_appned = shareditems.append
         for _e_root in self.root_tree:
             si = SiTag()
