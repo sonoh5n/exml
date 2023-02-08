@@ -114,6 +114,7 @@ class TestWorksheet:
         with pytest.raises(ValidationError) as exc:
             worksheet.get_worksheetpath(arg)
         assert expected in str(exc.value)
+        
 
 class TestMergeCell:
     
@@ -121,8 +122,18 @@ class TestMergeCell:
         mgcell = arch.get_mergecell("A1", 1)
         assert mgcell == ""
         
+class TestAddress2Coordinate:
     
-
+    @pytest.mark.parametrize('row, col, expected', [
+        (2, 27, "AA2"),
+        (3, 2, "B3")])
+    def test_convert_to_cell_address(self, setup_excel, arch, row, col, expected):
+        result = arch.convert_to_cell_address(row, col)
+        assert result == expected
     
-    
-    
+    @pytest.mark.parametrize('expected_row, expected_col, address', [
+        (1, 1, "A1"),(1, 27, "AA1")])
+    def test_convert_to_row_col_index(self, setup_excel, arch, expected_row, expected_col, address):
+        row, col = arch.convert_to_row_col_index(cell_address=address)
+        assert row == expected_row
+        assert col == expected_col
