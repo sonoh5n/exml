@@ -2,10 +2,9 @@ name: Test and Build Python package
 
 on:
   push:
-    branches:
-      - feature
-      - develop
-      - test
+    push:
+      branches:
+        - main
   pull_request:
     branches:
       - main
@@ -61,12 +60,8 @@ jobs:
         tox -e black
         tox -e mypy
         tox -e build-check
-    if: |
-      github.event_name == 'push' && (
-        (github.ref == 'refs/heads/develop') ||
-        (github.ref == 'refs/heads/feature') ||
-        (github.ref == 'refs/heads/test')
-      )
+
+    if: "'main' != github.ref"
 
   deploy:
     runs-on: ubuntu-latest

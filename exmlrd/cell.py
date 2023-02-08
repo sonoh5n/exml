@@ -155,7 +155,7 @@ class SheetXml:
                 shared=SiTag(),
             )
         try:
-            _ex_row = root_elem[__eidx][row - 1][col - 1]
+            _ex_row = root_elem[__eidx][row - 1]
         except IndexError as e:
             # meg = f"[cell({row},{col})] Warning: {e}"
             # logger.debug(meg)
@@ -165,7 +165,18 @@ class SheetXml:
                 shared=SiTag(),
             )
 
-        sidx = _ex_row.attrib.get("s")
+        serach_address = self.convert_to_cell_address(row=row, col=col)
+        for _sidx, _ex_col in enumerate(_ex_row):
+            if _ex_col.attrib["r"] == serach_address:
+                _ex_row = root_elem[__eidx][row - 1][_sidx]
+                break
+            else:
+                find_address = self.convert_to_row_col_index(_ex_col.attrib["r"])
+                if col > find_address[1]:
+                    continue
+                return Cell(row=row, col=col, address=serach_address, shared=SiTag())
+
+        # sidx = _ex_row.attrib.get("s")
         _cell = Cell(
             row=row,
             col=col,
@@ -250,28 +261,32 @@ class SheetXml:
         return mgcell
 
     def convert_to_row_col_index(self, cell_address: str) -> tuple[int, int]:
-        """Convert an Excel cell address in A1 format to a row-column index.
+        """Convert an Excel cell address in A1 format to a zero-based row and column index.
 
         Args:
-            cell_address (str): The cell address in A1 format.
+            cell_address (str): The cell address.
 
         Returns:
-            tuple of int: The row-column index as (row, column).
+            tuple: A tuple containing the row and column index.
 
         Example:
             >>> convert_to_row_col_index("A1")
-            (0, 0)
+            (1, 1)
             >>> convert_to_row_col_index("B2")
-            (1, 3)
+            (2, 2)
+            >>> convert_to_row_col_index("AA2")
+            (2, 27)
         """
-        col = 0
-        for c in cell_address:
-            if c.isalpha():
-                col = col * 26 + ord(c.upper()) - ord("A") + 1
-            else:
-                row = int(cell_address[len(cell_address) - int(c) :])
-                break
-        return (row, col)
+        match = re.match("([A-Z]+)([0-9]+)", cell_address)
+        if match:
+            col_str, row_str = match.groups()
+            col = 0
+            for c in col_str:
+                col = col * 26 + ord(c) - ord("A") + 1
+            row = int(row_str)
+            return (row, col)
+        else:
+            raise ValueError(f"Invalid cell address: {cell_address}")
 
     def convert_to_cell_address(self, row: int, col: int):
         """Convert a row-column index to an Excel cell address in A1 format.
