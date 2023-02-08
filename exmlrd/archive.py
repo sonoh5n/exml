@@ -58,24 +58,36 @@ class ExcelArchive:
         __merge_cells = self.sheetxml.get_mergecells(worksheet)
         return __merge_cells.ref
 
-    def get_sheetrange_address(self) -> str:
+    def get_sheetrange_address(self) -> Optional[str]:
         return self.sheetxml.get_dimension_address(worksheet=self.sheetnum)
-    
-    def get_sheetrange_coordinate(self, *, sheetnum = None):
+
+    def get_sheetrange_coordinate(self, *, sheetnum=None):
         if sheetnum is None:
             sheetnum = self.sheetnum
         return self.sheetxml.get_dimension_coordinate(worksheet=sheetnum)
-        
-    def to_json(self, *, save_path: Optional[str] = None):
-        start, end  = self.get_sheetrange_coordinate()
-        contents: dict[str, list[Any]] = {str(self.sheetnum): []}
-        for r in range(end[0]):
-            for c in range(end[1]):
-                cell = self.get_cell(r, c, worksheet=self.sheetnum)
-                contents[str(self.sheetnum)].append(asdict(cell))
+
+    def to_json(
+        self,
+        *,
+        row: Optional[int] = None,
+        col: Optional[int] = None,
+        save_path: Optional[str] = None
+    ):
+        ws_name = self.worksheet(self.sheetnum)
+        contents: dict[str, list[Any]] = {ws_name: []}
+        if (row is None) or (col is None):
+            start_coordinate, end_coordinate = self.get_sheetrange_coordinate()
+            for r in range(start_coordinate[0], end_coordinate[0]):
+                for c in range(start_coordinate[1], end_coordinate[1]):
+                    cell = self.get_cell(r + 1, c + 1, worksheet=self.sheetnum)
+                    contents[ws_name].append(asdict(cell))
+        else:
+            end_coordinate = (row, col)
+            cell = self.get_cell(row, col, worksheet=self.sheetnum)
+            contents[ws_name].append(asdict(cell))
 
         if save_path:
             with open(save_path, mode="w", encoding="utf-8") as f:
-                json.dump(contents, f, indent="2", ensure_ascii=True)
+                json.dump(contents, f, indent=2, ensure_ascii=False)
 
-        return json.dumps(contents, indent="2", ensure_ascii=True)
+        return json.dumps(contents, indent=2, ensure_ascii=False)
