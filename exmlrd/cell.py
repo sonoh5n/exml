@@ -171,7 +171,7 @@ class SheetXml:
             col=col,
             address=_ex_row.attrib["r"],
             shared=SiTag(),
-            style=self.style.get_format(int(str(sidx))),
+            style=Format(),
         )
         if _ex_row.attrib.get("t"):
             if _ex_row.attrib["t"] == "s":
