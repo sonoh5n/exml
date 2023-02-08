@@ -3,9 +3,10 @@ name: Test and Build Python package
 on:
   push:
     branches:
-      - feature
+      - feature*
       - develop
       - test
+      - fix*
   pull_request:
     branches:
       - main
