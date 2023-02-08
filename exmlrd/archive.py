@@ -1,8 +1,6 @@
-"""
-Copyright (c) 2023 HAYATO SONOKAWA
-"""
-
-from typing import Dict, Generator, List, Optional
+import json
+from dataclasses import asdict
+from typing import Any, Dict, Generator, List, Optional
 from zipfile import ZipFile
 
 from pydantic import validate_arguments
@@ -27,6 +25,7 @@ class ExcelArchive:
         self.excel = ExcelObj(path=filepath)
         self.archive = self.__arch(self.excel.path)
         self.sheetxml = SheetXml(self.archive)
+        self.sheetnum = 1
 
     def __arch(self, path: str):
         return ZipFile(path)
@@ -43,9 +42,11 @@ class ExcelArchive:
     @validate_arguments
     def worksheet(self, index: int) -> str:
         ws = self.sheetxml.worksheet(index)
+        if ws:
+            self.sheetnum = index
         return ws
 
-    def get_cell(self, row: int, col: int, *, worksheet: int = 1) -> Optional[Cell]:
+    def get_cell(self, row: int, col: int, *, worksheet: int = 1) -> Cell:
         __cell = self.sheetxml.get_cell(row, col, worksheet=worksheet)
         return __cell
 
@@ -56,3 +57,37 @@ class ExcelArchive:
     def get_all_mergecell(self, worksheet: int) -> dict[str, list[str]]:
         __merge_cells = self.sheetxml.get_mergecells(worksheet)
         return __merge_cells.ref
+
+    def get_sheetrange_address(self) -> Optional[str]:
+        return self.sheetxml.get_dimension_address(worksheet=self.sheetnum)
+
+    def get_sheetrange_coordinate(self, *, sheetnum=None):
+        if sheetnum is None:
+            sheetnum = self.sheetnum
+        return self.sheetxml.get_dimension_coordinate(worksheet=sheetnum)
+
+    def to_json(
+        self,
+        *,
+        row: Optional[int] = None,
+        col: Optional[int] = None,
+        save_path: Optional[str] = None
+    ):
+        ws_name = self.worksheet(self.sheetnum)
+        contents: dict[str, list[Any]] = {ws_name: []}
+        if (row is None) or (col is None):
+            start_coordinate, end_coordinate = self.get_sheetrange_coordinate()
+            for r in range(start_coordinate[0], end_coordinate[0]):
+                for c in range(start_coordinate[1], end_coordinate[1]):
+                    cell = self.get_cell(r + 1, c + 1, worksheet=self.sheetnum)
+                    contents[ws_name].append(asdict(cell))
+        else:
+            end_coordinate = (row, col)
+            cell = self.get_cell(row, col, worksheet=self.sheetnum)
+            contents[ws_name].append(asdict(cell))
+
+        if save_path:
+            with open(save_path, mode="w", encoding="utf-8") as f:
+                json.dump(contents, f, indent=2, ensure_ascii=False)
+
+        return json.dumps(contents, indent=2, ensure_ascii=False)

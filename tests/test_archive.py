@@ -1,3 +1,5 @@
+import os
+
 import pytest
 
 from exmlrd import log
@@ -41,9 +43,9 @@ def test_worksheet(setup_excel):
     assert ws == "Test1"
 
 @pytest.mark.parametrize('arg1, arg2, arg3', [
-    (0, 0, 'A1'),
-    (2, 3, 'D3'),
-    (3, 1, 'B4')])
+    (1, 1, 'A1'),
+    (2, 3, 'C2'),
+    (3, 1, 'A3')])
 def test_get_celladdress(setup_excel, arg1, arg2, arg3):
     archive = ExcelArchive("tests/sample.xlsx")
     cell = archive.get_cell(arg1,arg2)
@@ -53,8 +55,8 @@ def test_get_celladdress(setup_excel, arg1, arg2, arg3):
 
 
 @pytest.mark.parametrize('row, col, arg1, arg2, arg3, arg4, arg5, arg6, arg7', 
-    [(1, 1, 1, 1, "B2", "57","", SiTag(), Format()),
-    (2, 1, 2, 1, "B3", "19", "", SiTag(), Format())])
+    [(2, 2, 2, 2, "B2", "57","", SiTag(), Format()),
+    (3, 2, 3, 2, "B3", "19", "", SiTag(), Format())])
 def test_get_cells(setup_excel, row, col, arg1, arg2, arg3, arg4, arg5, arg6, arg7):
     archive = ExcelArchive("tests/sample.xlsx")
     cell = archive.get_cell(row,col)
@@ -80,3 +82,24 @@ def test_get_all_mergecell(setup_excel):
     result = archive.get_all_mergecell(1)
     assert list(result.keys()) == ["1"]
     assert set(result.get("1")) == set(pred.get("1"))
+
+@pytest.fixture
+def rmjsonfile():
+    yield
+    os.remove("tests/output.json")
+
+def test_convert_json(setup_excel, rmjsonfile):
+    archive = ExcelArchive("tests/sample.xlsx")
+    archive.to_json(row=1, col=1, save_path="tests/output.json")
+    assert os.path.exists("tests/output.json")
+
+def test_convert_json_contents(setup_excel):
+    pred = '{\n  "Test1": [\n    {\n      "row": 1,\n      "col": 1,\n      "address": "A1",\n      "value": "8",\n      "formula": "",\n      "shared": {\n        "rpr": []\n      },\n      "style": {\n        "numFmt": {\n          "id": "",\n          "formatCode": ""\n        },\n        "font": {\n          "sz": "11",\n          "name": "Calibri",\n          "family": "2",\n          "charset": "",\n          "scheme": "minor",\n          "color": "1",\n          "b": false,\n          "i": false,\n          "u": false,\n          "strike": false,\n          "outline": false,\n          "shadow": false,\n          "condense": "",\n          "extend": "",\n          "vertAlign": ""\n        },\n        "fill": {\n          "patternFill": "",\n          "fgColor": null,\n          "bgColor": null\n        },\n        "border": {\n          "left": false,\n          "right": false,\n          "top": false,\n          "bottom": false,\n          "diagonal": false\n        }\n      }\n    }\n  ]\n}'
+    archive = ExcelArchive("tests/sample.xlsx")
+    result = archive.to_json(row=1, col=1)
+    assert result == pred
+    
+    
+    
+    
+    

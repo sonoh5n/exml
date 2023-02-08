@@ -138,7 +138,7 @@ class Format:
     numFmt: NumFmt = Field(default_factory=NumFmt)
     font: Font = Field(default_factory=Font)
     fill: Fills = Field(default_factory=Fills)
-    border: Border= Field(default_factory=Border)
+    border: Border = Field(default_factory=Border)
 
 
 class Styels:
@@ -149,11 +149,11 @@ class Styels:
 
     Attributes:
         root_tree (Element | Any): The root element in the xml structure of sytle.xml
-        cellxfs (List[XFS]): Another class attribute with a description.
-        fontid (List[Font]): All element information in font tag in sytle.xml
-        fillid (List[Fills]): All element information in fill tag in sytle.xml
-        borders (List[Border]): All element information in borders tag in sytle.xml
-        numfmt (Dict[str, NumFmt]): All element information in numfmt tag in sytle.xml
+        cellxfs (list[XFS]): Another class attribute with a description.
+        fontid (list[Font]): All element information in font tag in sytle.xml
+        fillid (list[Fills]): All element information in fill tag in sytle.xml
+        borders (list[Border]): All element information in borders tag in sytle.xml
+        numfmt (dict[str, NumFmt]): All element information in numfmt tag in sytle.xml
     """
 
     styles_xml = "xl/styles.xml"
@@ -175,8 +175,8 @@ class Styels:
                     return index
         return None
 
-    def __get_fontid(self) -> List[Font]:
-        fontlists: List[Font] = []
+    def __get_fontid(self) -> list[Font]:
+        fontlists: list[Font] = []
         __eidx = self.__get_elem_index(self.root_tree, StylesTag.FONTS.value)
         if __eidx is None:
             return fontlists
@@ -206,8 +206,8 @@ class Styels:
             item = Font()
         return item
 
-    def __get_cellXfs(self) -> List[XFS]:
-        cellXfslists: List[XFS] = []
+    def __get_cellXfs(self) -> list[XFS]:
+        cellXfslists: list[XFS] = []
         __eidx = self.__get_elem_index(self.root_tree, StylesTag.CELLXFS.value)
         if __eidx is None:
             return cellXfslists
@@ -226,8 +226,8 @@ class Styels:
             cellxfs = XFS()
         return cellxfs
 
-    def __get_fillid(self) -> List[Fills]:
-        fillslists: List[Fills] = []
+    def __get_fillid(self) -> list[Fills]:
+        fillslists: list[Fills] = []
         __eidx = self.__get_elem_index(self.root_tree, StylesTag.FILLS.value)
         if __eidx is None:
             return fillslists
@@ -264,8 +264,8 @@ class Styels:
             fills = Fills()
         return fills
 
-    def __get_borders(self) -> List[Border]:
-        borderlists: List[Border] = []
+    def __get_borders(self) -> list[Border]:
+        borderlists: list[Border] = []
         __eidx = self.__get_elem_index(self.root_tree, StylesTag.BORDERS.value)
         if __eidx is None:
             return borderlists
@@ -296,8 +296,8 @@ class Styels:
             borders = Border()
         return borders
 
-    def __get_numfmt(self) -> Dict[str, NumFmt]:
-        numfmts: Dict[str, NumFmt] = {}
+    def __get_numfmt(self) -> dict[str, NumFmt]:
+        numfmts: dict[str, NumFmt] = {}
         __eidx = self.__get_elem_index(self.root_tree, StylesTag.NUMFMTS.value)
         if __eidx is None:
             return numfmts
@@ -306,7 +306,6 @@ class Styels:
             fid = _e_parents.attrib["numFmtId"]
             if fid:
                 numfmts[fid] = NumFmt(**_e_parents.attrib)
-        logger.debug(numfmts)
         return numfmts
 
     def get_numfmt(self, index: int) -> NumFmt:

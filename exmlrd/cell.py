@@ -1,6 +1,7 @@
 """
 Copyright (c) 2023 HAYATO SONOKAWA
 """
+import re
 import xml.etree.ElementTree as ET
 
 try:
@@ -26,8 +27,8 @@ logger = log.get_logger(__name__)
 
 @dataclasses.dataclass
 class Cell:
-    row: int = 0
-    col: int = 0
+    row: int = 1
+    col: int = 1
     address: str = ""
     value: str = ""
     formula: str = ""
@@ -36,7 +37,7 @@ class Cell:
 
     @validator("row", always=True)
     def check_row_range(cls, v):
-        if 0 <= v and v <= 1048575:
+        if 0 < v and v <= 1048576:
             return v
         else:
             raise CellOutsideRange(
@@ -45,7 +46,7 @@ class Cell:
 
     @validator("col", always=True)
     def check_col_range(cls, v):
-        if 0 <= v and v <= 18278:
+        if 0 < v and v <= 18279:
             return v
         else:
             raise CellOutsideRange(
@@ -64,7 +65,7 @@ class Worksheet:
 
     Attributes:
         archive (ZipFile): Excel archive information
-        worksheets (List[str]): Stores all worksheet names.
+        worksheets (list[str]): Stores all worksheet names.
     """
 
     workbook_path = "xl/workbook.xml"
@@ -91,7 +92,7 @@ class Worksheet:
             )
         return self.worksheets[index - 1]
 
-    def __get_worksheet_name(self) -> List[str]:
+    def __get_worksheet_name(self) -> list[str]:
         f = self.workbook_path
         tree = ET.parse(self.archive.open(f))
         root_elem = tree.getroot()
@@ -154,7 +155,7 @@ class SheetXml:
                 shared=SiTag(),
             )
         try:
-            _ex_row = root_elem[__eidx][row][col]
+            _ex_row = root_elem[__eidx][row - 1][col - 1]
         except IndexError as e:
             # meg = f"[cell({row},{col})] Warning: {e}"
             # logger.debug(meg)
@@ -201,6 +202,24 @@ class SheetXml:
 
         return _cell
 
+    def get_dimension_address(self, *, worksheet: int = 1) -> Optional[str]:
+        f = self.ws.get_worksheetpath(worksheet)
+        tree = ET.parse(self.archive.open(f))
+        root_elem = tree.getroot()
+        __eidx = self.__get_elem_index(root_elem, SheetXmlTag.DIMENSION.value)
+        if not isinstance(__eidx, int):
+            return None
+        _ex_row = root_elem[__eidx]
+        return _ex_row.attrib.get("ref")
+
+    def get_dimension_coordinate(self, *, worksheet: int = 1):
+        address = self.get_dimension_address(worksheet=worksheet)
+        if not isinstance(address, str):
+            return None
+        start_address = self.convert_to_row_col_index(address.split(":")[0])
+        end_address = self.convert_to_row_col_index(address.split(":")[1])
+        return start_address, end_address
+
     @cache
     def get_mergecell(self, start_cell: str, worksheet: int) -> str:
         f = self.ws.get_worksheetpath(worksheet)
@@ -229,3 +248,49 @@ class SheetXml:
                 mgcell.ref.setdefault(str(worksheet), [])
                 mgcell.ref[str(worksheet)].append((elem.attrib["ref"]))
         return mgcell
+
+    def convert_to_row_col_index(self, cell_address: str) -> tuple[int, int]:
+        """Convert an Excel cell address in A1 format to a row-column index.
+
+        Args:
+            cell_address (str): The cell address in A1 format.
+
+        Returns:
+            tuple of int: The row-column index as (row, column).
+
+        Example:
+            >>> convert_to_row_col_index("A1")
+            (0, 0)
+            >>> convert_to_row_col_index("B2")
+            (1, 3)
+        """
+        col = 0
+        for c in cell_address:
+            if c.isalpha():
+                col = col * 26 + ord(c.upper()) - ord("A") + 1
+            else:
+                row = int(cell_address[len(cell_address) - int(c) :])
+                break
+        return (row, col)
+
+    def convert_to_cell_address(self, row: int, col: int):
+        """Convert a row-column index to an Excel cell address in A1 format.
+
+        Args:
+            row (int): The row index.
+            col (int): The column index.
+
+        Returns:
+            str: The cell address in A1 format.
+
+        Example:
+            >>> convert_to_cell_address(0, 0)
+            'A1'
+            >>> convert_to_cell_address(2, 2)
+            'C3'
+        """
+        col_str = ""
+        while col > 0:
+            col, c = divmod(col - 1, 26)
+            col_str = chr(c + ord("A")) + col_str
+        return f"{col_str}{row}"
