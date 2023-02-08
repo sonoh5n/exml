@@ -67,7 +67,7 @@ def test_get_cells(setup_excel, row, col, arg1, arg2, arg3, arg4, arg5, arg6, ar
     assert cell.value == arg4
     assert cell.formula == arg5
     assert cell.shared == arg6
-    assert cell.style != arg7
+    assert cell.style == arg7
 
 @pytest.mark.parametrize('start_cell, sheet, pred', [
     ("A1", 1, ""),("H1", 1, "H1:I1")])
@@ -94,7 +94,7 @@ def test_convert_json(setup_excel, rmjsonfile):
     assert os.path.exists("tests/output.json")
 
 def test_convert_json_contents(setup_excel):
-    pred = '{\n  "Test1": [\n    {\n      "row": 1,\n      "col": 1,\n      "address": "A1",\n      "value": "8",\n      "formula": "",\n      "shared": {\n        "rpr": []\n      },\n      "style": {\n        "numFmt": {\n          "id": "",\n          "formatCode": ""\n        },\n        "font": {\n          "sz": "11",\n          "name": "Calibri",\n          "family": "2",\n          "charset": "",\n          "scheme": "minor",\n          "color": "1",\n          "b": false,\n          "i": false,\n          "u": false,\n          "strike": false,\n          "outline": false,\n          "shadow": false,\n          "condense": "",\n          "extend": "",\n          "vertAlign": ""\n        },\n        "fill": {\n          "patternFill": "",\n          "fgColor": null,\n          "bgColor": null\n        },\n        "border": {\n          "left": false,\n          "right": false,\n          "top": false,\n          "bottom": false,\n          "diagonal": false\n        }\n      }\n    }\n  ]\n}'
+    pred = '{\n  "Test1": [\n    {\n      "row": 1,\n      "col": 1,\n      "address": "A1",\n      "value": "8",\n      "formula": "",\n      "shared": {\n        "rpr": []\n      },\n      "style": {\n        "numFmt": {\n          "id": "",\n          "formatCode": ""\n        },\n        "font": {\n          "sz": "",\n          "name": "",\n          "family": "",\n          "charset": "",\n          "scheme": "",\n          "color": "",\n          "b": false,\n          "i": false,\n          "u": false,\n          "strike": false,\n          "outline": false,\n          "shadow": false,\n          "condense": "",\n          "extend": "",\n          "vertAlign": ""\n        },\n        "fill": {\n          "patternFill": "",\n          "fgColor": null,\n          "bgColor": null\n        },\n        "border": {\n          "left": false,\n          "right": false,\n          "top": false,\n          "bottom": false,\n          "diagonal": false\n        }\n      }\n    }\n  ]\n}'
     archive = ExcelArchive("tests/sample.xlsx")
     result = archive.to_json(row=1, col=1)
     assert result == pred

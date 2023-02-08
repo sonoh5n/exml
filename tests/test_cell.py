@@ -27,7 +27,7 @@ class TestCell:
     def test_init_cell(slef, setup_excel, cell):
         pred_si = SiTag()
         pred_format = Format()
-        pred_c = 0
+        pred_c = 1
         pred_a = ""
         assert cell.row == pred_c
         assert cell.col == pred_c
@@ -130,6 +130,12 @@ class TestAddress2Coordinate:
     def test_convert_to_cell_address(self, setup_excel, arch, row, col, expected):
         result = arch.convert_to_cell_address(row, col)
         assert result == expected
+    
+    def test_faild_convert_to_row_col_index(self, arch):
+        pred_msg = "Invalid cell address: 8A2"
+        with pytest.raises(ValueError) as exc:
+            arch.convert_to_row_col_index("8A2")
+        assert pred_msg in str(exc.value)
     
     @pytest.mark.parametrize('expected_row, expected_col, address', [
         (1, 1, "A1"),(1, 27, "AA1")])
