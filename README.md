@@ -129,6 +129,86 @@ merge_cells = excel_arch.get_all_mergecell(1)
 print(merge_cells)
 ```
 
+### Convert Json
+
+You can also convert the information in Excel to JSON using `to_json()`
+
+Additionally, by specifying a filename, you can output to a JSON file.
+
+```python
+excel_arch = exmlrd.excel_archiver("myInputExcelFile.xlsx")
+# Cell(2,3) => Json
+cvt_json = excel_arch.to_json(row=2, col=3)
+# Cell(2,3) => sample.json
+cvt_json = excel_arch.to_json(row=2, col=3, save_path="sample.json")
+```
+
+Output:
+
+```json
+{
+  "Test1": [
+    {
+      "row": 1,
+      "col": 1,
+      "address": "A1",
+      "value": "Sample Data",
+      "formula": "",
+      "shared": {
+        "rpr": [
+          {
+            "sz": "",
+            "color": "",
+            "rFont": "",
+            "family": "",
+            "scheme": "",
+            "charset": "",
+            "text": "Sample Data"
+          }
+        ]
+      },
+      "style": {
+        "numFmt": {
+          "id": "",
+          "formatCode": ""
+        },
+        "font": {
+          "sz": "6",
+          "name": "ＭＳ Ｐゴシック",
+          "family": "3",
+          "charset": "128",
+          "scheme": "minor",
+          "color": "",
+          "b": false,
+          "i": false,
+          "u": false,
+          "strike": false,
+          "outline": false,
+          "shadow": false,
+          "condense": "",
+          "extend": "",
+          "vertAlign": ""
+        },
+        "fill": {
+          "patternFill": "none",
+          "fgColor": null,
+          "bgColor": null
+        },
+        "border": {
+          "left": false,
+          "right": false,
+          "top": false,
+          "bottom": false,
+          "diagonal": false
+        }
+      }
+    }
+  ]
+}
+```
+
+
+
 ## In Conclusion and Looking Forward
 
 Thank you for using this project. If you have any suggestions or questions, please feel free to reach out. We hope this project has been helpful for you.
