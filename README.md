@@ -8,11 +8,14 @@ With exmlrd, you can easily read and extract data from Excel files without writi
 
 ## Installation
 
-Use pip to install exmlrd:
+Use pip to install exmlrd: 
+
 
 ```bash
 pip install exmlrd
 ```
+
+> Link: <https://pypi.org/project/exmlrd/>
 
 ## Usage
 
