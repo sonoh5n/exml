@@ -138,7 +138,7 @@ class Format:
     numFmt: NumFmt = Field(default_factory=NumFmt)
     font: Font = Field(default_factory=Font)
     fill: Fills = Field(default_factory=Fills)
-    border: Border= Field(default_factory=Border)
+    border: Border = Field(default_factory=Border)
 
 
 class Styels:
@@ -306,7 +306,6 @@ class Styels:
             fid = _e_parents.attrib["numFmtId"]
             if fid:
                 numfmts[fid] = NumFmt(**_e_parents.attrib)
-        logger.debug(numfmts)
         return numfmts
 
     def get_numfmt(self, index: int) -> NumFmt:
