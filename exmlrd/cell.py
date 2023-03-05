@@ -9,7 +9,7 @@ try:
 except ImportError:
     from functools import lru_cache as cache
 
-from typing import Dict, List, Optional
+from typing import Optional
 from xml.etree.ElementTree import Element
 from zipfile import ZipFile
 

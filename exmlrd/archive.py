@@ -1,11 +1,12 @@
 import json
 from dataclasses import asdict
-from typing import Any, Dict, Generator, List, Optional
+from typing import Any, Generator, Optional
 from zipfile import ZipFile
 
 from pydantic import validate_arguments
 
 from exmlrd.cell import Cell, SheetXml
+from exmlrd.chart import XmlChart
 from exmlrd.excel import ExcelObj
 
 
@@ -25,6 +26,7 @@ class ExcelArchive:
         self.excel = ExcelObj(path=filepath)
         self.archive = self.__arch(self.excel.path)
         self.sheetxml = SheetXml(self.archive)
+        self.chart = XmlChart(self.archive)
         self.sheetnum = 1
 
     def __arch(self, path: str):
@@ -65,6 +67,12 @@ class ExcelArchive:
         if sheetnum is None:
             sheetnum = self.sheetnum
         return self.sheetxml.get_dimension_coordinate(worksheet=sheetnum)
+
+    def get_charts_list(self):
+        raise RuntimeError
+
+    def get_chart(self, index: int):
+        raise RuntimeError
 
     def to_json(
         self,
