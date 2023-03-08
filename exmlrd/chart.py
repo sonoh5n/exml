@@ -24,7 +24,7 @@ class Chart:
         except KeyError:
             self.root_tree = None
 
-        self.plot_area_elem = self.root.find(".//c:plotArea", namespaces=self.ns)
+        self.plot_area_elem = self.root_tree.find(".//c:plotArea", namespaces=self.ns)
         self.chart_type_path = self.get_chart_type()
 
     def get_chart_type(self) -> str:
@@ -42,10 +42,10 @@ class Chart:
             # Not Support type: doughnutChart/bubbleChart/radarChart/surfaceChart
             _chart_type = ""
 
-        return f".//c:{_chart_type}"
+        return _chart_type
 
-    def get_chart_range(self) -> Tuple[str, str]:
-        range_pattern = f".//{self.chart_type_path}/c:ser/c:xVal/c:numRef/c:f"
+    def get_chart_range(self, value_type: str) -> Tuple[str, str]:
+        range_pattern = f".//c:{self.chart_type_path}/c:ser/c:{value_type}/c:numRef/c:f"
         range = self.plot_area_elem.find(range_pattern, namespaces=self.ns)
         if not range:
             return "", ""
@@ -59,14 +59,24 @@ class Chart:
         return sheet_name, cell_range
 
 
-    def get_chart():
-        ...
+    def get_chart(self):
+        xval_pattern = f".//c:{self.chart_type_path}/c:ser/c:xVal/c:numRef/c:numCache"
+        xvals = []
+        for elem in self.plot_area_elem.find(xval_pattern, namespaces=self.ns):
+            if not elem.attrib.get("idx"):
+                continue
+            for v in elem:
+                xvals.append(convert_numeric_string(v.text))
 
+        yval_pattern = f".//c:{self.chart_type_path}/c:ser/c:yVal/c:numRef/c:numCache"
+        yvals = []
+        for elem in self.plot_area_elem.find(yval_pattern, namespaces=self.ns):
+            if not elem.attrib.get("idx"):
+                continue
+            for v in elem:
+                yvals.append(convert_numeric_string(v.text))
 
-
-
-
-
+        return xvals, yvals
 
 
 class XmlChart:
@@ -101,4 +111,17 @@ class XmlChart:
             return
 
         index = str(index)
+        chart = Chart(self.archive, chartpath)
 
+        x, y = chart.get_chart()
+        return chart
+
+
+def convert_numeric_string(sval: str):
+    try:
+        return int(sval)
+    except ValueError:
+        try:
+            return float(sval)
+        except ValueError:
+            return None

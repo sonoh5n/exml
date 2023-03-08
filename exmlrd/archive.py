@@ -27,6 +27,7 @@ class ExcelArchive:
         self.archive = self.__arch(self.excel.path)
         self.sheetxml = SheetXml(self.archive)
         self.chart = XmlChart(self.archive)
+        self.chart.get_chart(0)
         self.sheetnum = 1
 
     def __arch(self, path: str):
